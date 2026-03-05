@@ -16,19 +16,30 @@ class Harold(pygame.Rect):
             self.velocity_x = 0
         else:
             self.velocity_x -= friction * np.sign(self.velocity_x)
+
         if self.velocity_x > max_speed:
             self.velocity_x = max_speed
+
         if self.velocity_x < -max_speed:
             self.velocity_x = -max_speed
+
         if self.y > cap_y:
             self.y = cap_y
             self.airborne = False
-        if self.x > cap_x-20:
-            self.x = cap_x-20
-            self.velocity_x *= -0.6
+
+        if self.x > cap_x - 20:
+            self.x = cap_x - 20
+            if abs(self.velocity_x) > 1:
+                self.velocity_x *= -0.8
+            else:
+                self.velocity_x = 0
+
         if self.x < 100:
             self.x = 100
-            self.velocity_x *= -0.6
+            if abs(self.velocity_x) > 1:
+                self.velocity_x *= -0.8
+            else:
+                self.velocity_x = 0
         self.x += self.velocity_x
 
 class Block(pygame.Rect):
@@ -45,15 +56,17 @@ def main():
     SHAPE_X = 20
     SHAPE_Y = 20
     GRAVITY = 0.5
-    FRICTION = 2
+    FRICTION = 0.4
     COLOR = (255,0,0)
     COLOR_GRAY = (200,200,200)
-    VELOCITY = 4
+    VELOCITY = 0.6
     SCREEN_WIDTH = 600
     SCREEN_HEIGHT = 600
-    MAX_SPEED = 10
+    MAX_SPEED = 6
     MULTIPLIER = 0.8
     CAMERA_LINE = 300
+    WALL_BOUNCE = 0.6    
+    MIN_BOUNCE_SPEED = 1 
     #Boolean variables
     running = True
     camera_roll = False
@@ -82,16 +95,19 @@ def main():
         if keys[pygame.K_w] and not harold.airborne: # Góra
             harold.velocity_y = -10 - np.abs(harold.velocity_x)*MULTIPLIER
             harold.airborne = True
-        print(harold.y)
-        
            
         if render_distance not in blocks:
             if render_distance < 80_000:
                 block_w = np.random.randint(5,30)*10
                 block_x = -100
                 while block_x + block_w > 500 or block_x == -100:
-                    block_x = np.random.randint(10, 45)*10
+                    if not (len(blocks)+1)%50:
+                        block_x = 100
+                        block_w = 400
+                    else: 
+                        block_x = np.random.randint(10, 45)*10
                 blocks[render_distance] = Block(block_x, 480 - render_distance, block_w)
+
                 render_distance += 80
 
 
