@@ -59,9 +59,9 @@ class Block(pygame.Rect):
 def main():
     # Global variables
     INIT_X = 300
-    INIT_Y = 550
+    INIT_Y = 530
     SHAPE_X = 20
-    SHAPE_Y = 20
+    SHAPE_Y = 30
     GRAVITY = 0.5
     FRICTION = 0.3
     COLOR = (255,0,0)
@@ -71,12 +71,21 @@ def main():
     SCREEN_HEIGHT = 600
     MAX_SPEED = 6
     MULTIPLIER = 0.8
-    CAMERA_LINE = 300
+    CAMERA_LINE = 350
+    COMBO_TIMEOUT = 3000
+
     #Boolean variables
     running = True
     camera_roll = False
+
     #Variables
+    score = 0
+    agg_combo = 0
+    final_score = 0
+    combo = 0
+    best_combo = 0
     render_distance = 0
+    last_land_time = pygame.time.get_ticks()
     blocks = {}
     roll_start_time = None
 
@@ -84,8 +93,12 @@ def main():
 
     # Set up the game window
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.font.init() 
+    my_font = pygame.font.SysFont('Comic Sans MS', 30)
     pygame.display.set_caption("Hoty Tower")
-    harold = Harold(INIT_X, INIT_Y, SHAPE_X, SHAPE_Y)
+    harold = Harold(INIT_X, INIT_Y, SHAPE_X, SHAPE_Y) 
+    blocks["hello world"] = Block(100, 570, 400)
+    
     # Game loop
 
     clock = pygame.time.Clock()
@@ -122,6 +135,13 @@ def main():
 
 
         screen.fill((0, 0, 0))
+
+        text_surface = my_font.render(f'Score: {final_score}', False, (255, 0, 0))
+        screen.blit(text_surface, (0,0))
+
+        text_surface = my_font.render(f'Combo: {combo}', False, (255, 0, 0))
+        screen.blit(text_surface, (0,20))
+
         if camera_roll:
             if harold.y < 200:
                 scroll = 200 - harold.y
@@ -131,7 +151,7 @@ def main():
 
         on_ground = False
 
-        for block in blocks.values():
+        for val, block in blocks.items():
             pygame.draw.rect(screen, COLOR_GRAY, block)
             if harold.velocity_y > 0 and harold.colliderect(block):
                 if harold.bottom - harold.velocity_y <= block.top:
@@ -139,10 +159,36 @@ def main():
                     harold.velocity_y = 0
                     on_ground = True
                     harold.airborne = False
+                    if isinstance(val, str):
+                        score = 0
+                    else:
+                        prev_score = score
+                        if val//8 - prev_score != 0:
+                            print(val//8 - prev_score)
+                            if val//8 - prev_score > 10:
+                                combo += val//80 - prev_score//10
+                                last_land_time = pygame.time.get_ticks()
+                            else:
+                                if combo > 4:
+                                    agg_combo += combo**2
+                                if best_combo < combo:
+                                    best_combo = combo
+                                combo = 0
+                        score = val//8
+                        final_score = score + agg_combo
             if camera_roll:
                 elapsed = pygame.time.get_ticks() - roll_start_time
                 block.y += 1 + elapsed // 30_000
                     
+        # Reset po 3 sekundach
+        if pygame.time.get_ticks() - last_land_time > COMBO_TIMEOUT:
+            if combo > 4:
+                agg_combo += combo**2
+            if best_combo < combo:
+                best_combo = combo
+            combo = 0
+            last_land_time = pygame.time.get_ticks()
+
         if not on_ground:
             harold.airborne = True
 
