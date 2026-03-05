@@ -8,6 +8,7 @@ class Harold(pygame.Rect):
         self.airborne = False
         self.velocity_y = 0
         self.velocity_x = 0
+        self.charge = 0
     def move(self, gravity, friction, max_speed, cap_y=550, cap_x=500):
         self.y += self.velocity_y
         self.velocity_y += gravity
@@ -40,6 +41,12 @@ class Harold(pygame.Rect):
                 self.velocity_x *= -0.8
             else:
                 self.velocity_x = 0
+
+        if abs(self.velocity_x) == max_speed:
+            self.charge += 1
+        else:
+            if not self.airborne:
+                self.charge = 0
         self.x += self.velocity_x
 
 class Block(pygame.Rect):
@@ -56,7 +63,7 @@ def main():
     SHAPE_X = 20
     SHAPE_Y = 20
     GRAVITY = 0.5
-    FRICTION = 0.4
+    FRICTION = 0.3
     COLOR = (255,0,0)
     COLOR_GRAY = (200,200,200)
     VELOCITY = 0.6
@@ -65,14 +72,13 @@ def main():
     MAX_SPEED = 6
     MULTIPLIER = 0.8
     CAMERA_LINE = 300
-    WALL_BOUNCE = 0.6    
-    MIN_BOUNCE_SPEED = 1 
     #Boolean variables
     running = True
     camera_roll = False
     #Variables
     render_distance = 0
     blocks = {}
+    roll_start_time = None
 
     pygame.init()
 
@@ -93,9 +99,13 @@ def main():
         if keys[pygame.K_d]: # Prawo
             harold.velocity_x += VELOCITY
         if keys[pygame.K_w] and not harold.airborne: # Góra
-            harold.velocity_y = -10 - np.abs(harold.velocity_x)*MULTIPLIER
+            if harold.charge < 20:
+                charge = 0.3
+            else:
+                charge = 1 
+            harold.velocity_y = -10 - np.abs(harold.velocity_x)*MULTIPLIER*charge
             harold.airborne = True
-           
+
         if render_distance not in blocks:
             if render_distance < 80_000:
                 block_w = np.random.randint(5,30)*10
@@ -118,24 +128,32 @@ def main():
                 harold.y = 200
                 for block in blocks.values():
                     block.y += scroll
+
+        on_ground = False
+
         for block in blocks.values():
             pygame.draw.rect(screen, COLOR_GRAY, block)
             if harold.velocity_y > 0 and harold.colliderect(block):
                 if harold.bottom - harold.velocity_y <= block.top:
                     harold.bottom = block.top
                     harold.velocity_y = 0
+                    on_ground = True
                     harold.airborne = False
             if camera_roll:
-                block.y += 1
+                elapsed = pygame.time.get_ticks() - roll_start_time
+                block.y += 1 + elapsed // 30_000
                     
+        if not on_ground:
+            harold.airborne = True
 
         if not camera_roll:
             if harold.y < CAMERA_LINE:
                 camera_roll = True
+                roll_start_time = pygame.time.get_ticks()
             harold.move(GRAVITY, FRICTION, MAX_SPEED)
         else:
             harold.move(GRAVITY, FRICTION, MAX_SPEED, cap_y=700) 
-        
+
         if harold.y > 600:
             running = False
         
