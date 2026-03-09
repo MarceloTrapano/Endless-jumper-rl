@@ -59,9 +59,9 @@ class Block(pygame.Rect):
 def main():
     # Global variables
     INIT_X = 300
-    INIT_Y = 530
+    INIT_Y = 520
     SHAPE_X = 20
-    SHAPE_Y = 30
+    SHAPE_Y = 50
     GRAVITY = 0.5
     FRICTION = 0.3
     COLOR = (255,0,0)
@@ -164,7 +164,6 @@ def main():
                     else:
                         prev_score = score
                         if val//8 - prev_score != 0:
-                            print(val//8 - prev_score)
                             if val//8 - prev_score > 10:
                                 combo += val//80 - prev_score//10
                                 last_land_time = pygame.time.get_ticks()

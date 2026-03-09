@@ -14,11 +14,13 @@ def draw_block(screen, block, start_tile, tile_image, end_tile):
             screen.blit(tile_image, (x, block.y))
 
 def main():
+    pygame.init()
+    pygame.font.init() 
     # Global variables
     INIT_X = 300
-    INIT_Y = 530
+    INIT_Y = 520
     SHAPE_X = 20
-    SHAPE_Y = 30
+    SHAPE_Y = 50
     GRAVITY = 0.5
     FRICTION = 0.3
     COLOR = (255,0,0)
@@ -30,10 +32,14 @@ def main():
     MULTIPLIER = 0.8
     CAMERA_LINE = 350
     COMBO_TIMEOUT = 3000
-    START_TILE_1 = pygame.image.load("assets/left_1.png")
-    MIDDLE_TILE_1 = pygame.image.load("assets/middle_1.png")
-    END_TILE_1 = pygame.image.load("assets/right_1.png")
-    BACKGROUND = pygame.image.load("assets/background.png")
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    START_TILE_1 = pygame.image.load("assets/left_1.png").convert_alpha()
+    MIDDLE_TILE_1 = pygame.image.load("assets/middle_1.png").convert_alpha()
+    END_TILE_1 = pygame.image.load("assets/right_1.png").convert_alpha()
+    BACKGROUND = pygame.image.load("assets/background.png").convert_alpha()
+    PLAYER_RIGHT1 = pygame.image.load("assets/right_player_1.png").convert_alpha()
+    PLAYER_LEFT1 = pygame.image.load("assets/left_player_1.png").convert_alpha()
+    PLAYER_FRONT = pygame.image.load("assets/Front_player.png").convert_alpha()
     BG_TILE_H = BACKGROUND.get_height()
 
     #Boolean variables
@@ -51,20 +57,17 @@ def main():
     render_distance = 0
     last_land_time = pygame.time.get_ticks()
     blocks = {}
-    roll_start_time = None
-    background = []
+    roll_start_time = None  
 
-    pygame.init()
+    
 
     # Set up the game window
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.font.init() 
     my_font = pygame.font.SysFont('Comic Sans MS', 30)
     pygame.display.set_caption("Hoty Tower")
-    harold = Harold(INIT_X, INIT_Y, SHAPE_X, SHAPE_Y) 
-    blocks["hello world"] = Block(50, 570, 600)
-    blocks["left_wall"] = Block(0,0,120,600, image=pygame.image.load("assets/wall_left.png"))
-    blocks["right_wall"] = Block(500,0,120,600, image=pygame.image.load("assets/wall_right.png"))
+    harold = Harold(INIT_X, INIT_Y, SHAPE_X, SHAPE_Y, image=PLAYER_FRONT) 
+    blocks["hello world"] = Block(50, 570, 500)
+    blocks["left_wall"] = Block(0,0,120,600, image=pygame.image.load("assets/wall_left.png").convert_alpha())
+    blocks["right_wall"] = Block(500,0,120,600, image=pygame.image.load("assets/wall_right.png").convert_alpha())
     
     # Game loop
 
@@ -74,10 +77,13 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         keys = pygame.key.get_pressed()
+        harold.image = PLAYER_FRONT
         if keys[pygame.K_a]: # Lewo
             harold.velocity_x -= VELOCITY
+            harold.image = PLAYER_LEFT1
         if keys[pygame.K_d]: # Prawo
             harold.velocity_x += VELOCITY
+            harold.image = PLAYER_RIGHT1
         if keys[pygame.K_w] and not harold.airborne: # Góra
             if harold.charge < 20:
                 charge = 0.3
@@ -93,7 +99,7 @@ def main():
                 while block_x + block_w > 500 or block_x == -100:
                     if not (len(blocks)+1)%50:
                         block_x = 0
-                        block_w = 600
+                        block_w = 500
                         break
                     else: 
                         block_x = np.random.randint(10, 45)*10
@@ -141,7 +147,6 @@ def main():
                     else:
                         prev_score = score
                         if val//8 - prev_score != 0:
-                            print(val//8 - prev_score)
                             if val//8 - prev_score > 10:
                                 combo += val//80 - prev_score//10
                                 last_land_time = pygame.time.get_ticks()
@@ -195,7 +200,7 @@ def main():
         screen.blit(text_surface, (0,20))
 
         
-        pygame.draw.rect(screen, COLOR, harold)
+        screen.blit(harold.image, harold)
         pygame.display.flip()
         clock.tick(60)
 
