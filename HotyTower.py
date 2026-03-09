@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-from Game import Harold, Block
+from Game import *
 
 def draw_block(screen, block, start_tile, tile_image, end_tile):
     tile_w = tile_image.get_width()
@@ -17,21 +17,8 @@ def main():
     pygame.init()
     pygame.font.init() 
     # Global variables
-    INIT_X = 300
-    INIT_Y = 520
-    SHAPE_X = 20
-    SHAPE_Y = 50
-    GRAVITY = 0.5
-    FRICTION = 0.3
-    COLOR = (255,0,0)
-    COLOR_GRAY = (200,200,200)
-    VELOCITY = 0.6
     SCREEN_WIDTH = 600
     SCREEN_HEIGHT = 600
-    MAX_SPEED = 6
-    MULTIPLIER = 0.8
-    CAMERA_LINE = 350
-    COMBO_TIMEOUT = 3000
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     START_TILE_1 = pygame.image.load("assets/left_1.png").convert_alpha()
     MIDDLE_TILE_1 = pygame.image.load("assets/middle_1.png").convert_alpha()

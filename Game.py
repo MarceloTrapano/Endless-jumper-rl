@@ -1,6 +1,20 @@
 import pygame
 import numpy as np
 
+INIT_X = 300
+INIT_Y = 520
+SHAPE_X = 20
+SHAPE_Y = 50
+GRAVITY = 0.5
+FRICTION = 0.3
+COLOR = (255,0,0)
+COLOR_GRAY = (200,200,200)
+VELOCITY = 0.6
+MAX_SPEED = 6
+MULTIPLIER = 0.8
+CAMERA_LINE = 350
+COMBO_TIMEOUT = 3000
+
 class Harold(pygame.Rect):
     def __init__(self, x, y, width, height, image=None):
         pygame.Rect.__init__(self, x, y, width, height)
@@ -51,6 +65,10 @@ class Harold(pygame.Rect):
 
 class Block(pygame.Rect):
     def __init__(self, x, y, width, height=20, image=None):
+        self.x = x
+        self.y = y
+        self.w = width
+        self.h = height
         pygame.Rect.__init__(self, x, y, width, height)
         self.image = image
         
@@ -58,21 +76,8 @@ class Block(pygame.Rect):
 
 def main():
     # Global variables
-    INIT_X = 300
-    INIT_Y = 520
-    SHAPE_X = 20
-    SHAPE_Y = 50
-    GRAVITY = 0.5
-    FRICTION = 0.3
-    COLOR = (255,0,0)
-    COLOR_GRAY = (200,200,200)
-    VELOCITY = 0.6
     SCREEN_WIDTH = 600
     SCREEN_HEIGHT = 600
-    MAX_SPEED = 6
-    MULTIPLIER = 0.8
-    CAMERA_LINE = 350
-    COMBO_TIMEOUT = 3000
 
     #Boolean variables
     running = True
@@ -107,11 +112,11 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]: # Lewo
+        if keys[pygame.K_a]: # Left
             harold.velocity_x -= VELOCITY
-        if keys[pygame.K_d]: # Prawo
+        if keys[pygame.K_d]: # Right
             harold.velocity_x += VELOCITY
-        if keys[pygame.K_w] and not harold.airborne: # Góra
+        if keys[pygame.K_w] and not harold.airborne: # Jump
             if harold.charge < 20:
                 charge = 0.3
             else:
