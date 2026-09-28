@@ -1,0 +1,7 @@
+model/
+*.jpg
+*.png
+*.csv
+.venv/
+__pycache__/
+*.ipynb
