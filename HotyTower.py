@@ -16,7 +16,7 @@ def draw_block(screen, block, start_tile, tile_image, end_tile):
 def main():
     pygame.init()
     pygame.font.init() 
-    # Global variables
+    
     SCREEN_WIDTH = 600
     SCREEN_HEIGHT = 600
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -29,11 +29,9 @@ def main():
     PLAYER_FRONT = pygame.image.load("assets/Front_player.png").convert_alpha()
     BG_TILE_H = BACKGROUND.get_height()
 
-    #Boolean variables
     running = True
     camera_roll = False
 
-    #Variables
     background_y_offset = 0
     bg_tiles_count = SCREEN_HEIGHT // BG_TILE_H + 2 
     score = 0
@@ -46,8 +44,6 @@ def main():
     blocks = {}
     roll_start_time = None  
 
-    
-
     # Set up the game window
     my_font = pygame.font.SysFont('Comic Sans MS', 30)
     pygame.display.set_caption("Hoty Tower")
@@ -57,7 +53,6 @@ def main():
     blocks["right_wall"] = Block(500,0,120,600, image=pygame.image.load("assets/wall_right.png").convert_alpha())
     
     # Game loop
-
     clock = pygame.time.Clock()
     while running:
         for event in pygame.event.get():
@@ -65,10 +60,10 @@ def main():
                 running = False
         keys = pygame.key.get_pressed()
         harold.image = PLAYER_FRONT
-        if keys[pygame.K_a]: # Lewo
+        if keys[pygame.K_a]:
             harold.velocity_x -= VELOCITY
             harold.image = PLAYER_LEFT1
-        if keys[pygame.K_d]: # Prawo
+        if keys[pygame.K_d]:
             harold.velocity_x += VELOCITY
             harold.image = PLAYER_RIGHT1
         if keys[pygame.K_w] and not harold.airborne: # Góra
@@ -122,7 +117,7 @@ def main():
             if val in ["left_wall", "right_wall"]:
                 continue
             draw_block(screen, block, START_TILE_1, MIDDLE_TILE_1, END_TILE_1)
-            #pygame.draw.rect(screen, COLOR_GRAY, block)
+            
             if harold.velocity_y > 0 and harold.colliderect(block):
                 if harold.bottom - harold.velocity_y <= block.top:
                     harold.bottom = block.top
@@ -149,7 +144,6 @@ def main():
                 elapsed = pygame.time.get_ticks() - roll_start_time
                 block.y += 1 + elapsed // 30_000
                     
-        # Reset po 3 sekundach
         if pygame.time.get_ticks() - last_land_time > COMBO_TIMEOUT:
             if combo > 4:
                 agg_combo += combo**2
@@ -180,6 +174,8 @@ def main():
                 continue
             break
 
+        # Display score
+
         text_surface = my_font.render(f'Score: {final_score}', False, (255, 0, 0))
         screen.blit(text_surface, (0,0))
 
@@ -192,7 +188,6 @@ def main():
         clock.tick(60)
 
 
-    # Quit Pygame
     pygame.quit()
 
 if __name__=="__main__":
