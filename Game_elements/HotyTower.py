@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-from .Game_objects import *
+from Game_objects import *
 
 def draw_block(screen, block, start_tile, tile_image, end_tile):
     tile_w = tile_image.get_width()
@@ -20,13 +20,13 @@ def main():
     SCREEN_WIDTH = 600
     SCREEN_HEIGHT = 600
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    START_TILE_1 = pygame.image.load("assets/left_1.png").convert_alpha()
-    MIDDLE_TILE_1 = pygame.image.load("assets/middle_1.png").convert_alpha()
-    END_TILE_1 = pygame.image.load("assets/right_1.png").convert_alpha()
-    BACKGROUND = pygame.image.load("assets/background.png").convert_alpha()
-    PLAYER_RIGHT1 = pygame.image.load("assets/right_player_1.png").convert_alpha()
-    PLAYER_LEFT1 = pygame.image.load("assets/left_player_1.png").convert_alpha()
-    PLAYER_FRONT = pygame.image.load("assets/Front_player.png").convert_alpha()
+    START_TILE_1 = pygame.image.load("../assets/left_1.png").convert_alpha()
+    MIDDLE_TILE_1 = pygame.image.load("../assets/middle_1.png").convert_alpha()
+    END_TILE_1 = pygame.image.load("../assets/right_1.png").convert_alpha()
+    BACKGROUND = pygame.image.load("../assets/background.png").convert_alpha()
+    PLAYER_RIGHT1 = pygame.image.load("../assets/right_player_1.png").convert_alpha()
+    PLAYER_LEFT1 = pygame.image.load("../assets/left_player_1.png").convert_alpha()
+    PLAYER_FRONT = pygame.image.load("../assets/Front_player.png").convert_alpha()
     BG_TILE_H = BACKGROUND.get_height()
 
     running = True
@@ -49,8 +49,8 @@ def main():
     pygame.display.set_caption("Hoty Tower")
     harold = Harold(INIT_X, INIT_Y, SHAPE_X, SHAPE_Y, image=PLAYER_FRONT) 
     blocks["hello world"] = Block(50, 570, 500)
-    blocks["left_wall"] = Block(0,0,120,600, image=pygame.image.load("assets/wall_left.png").convert_alpha())
-    blocks["right_wall"] = Block(500,0,120,600, image=pygame.image.load("assets/wall_right.png").convert_alpha())
+    blocks["left_wall"] = Block(0,0,120,600, image=pygame.image.load("../assets/wall_left.png").convert_alpha())
+    blocks["right_wall"] = Block(500,0,120,600, image=pygame.image.load("../assets/wall_right.png").convert_alpha())
     
     # Game loop
     clock = pygame.time.Clock()
